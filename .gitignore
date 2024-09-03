@@ -1,0 +1,3 @@
+deploy_version/Normalizing_Flows/data/**
+*.DS_Store
+*__pycache__
