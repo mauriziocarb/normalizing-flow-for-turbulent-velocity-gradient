@@ -32,17 +32,17 @@ from util_code.main_util import init_parallel, init_variables, init_model
 ##################################################################
 
 ## Training parameters
-logf_network_file = "nf_results/states/f_state_epoch_80.pt"    # state-file for the previously trained single-point pdf network (see nf_optim files)
-G_network_file    = "traj_results/states/G_state_epoch_20.pt"  # state-file from previous training to use for initialization of the MULTI-TIME stat. network
-                    # (set to None for random initializition)
+logf_network_file = "nf_results/states/f_state_epoch_80.pt"    # state-file for the previously trained single-point pdf network (see main_nf_optim.py file)
+G_network_file    = "traj_results/states/G_state_epoch_20.pt"  # state-file for the previously trained multi-time stat. network
+                    # (see main_traj_optim.py file, set to None for random initializition)
 out_dir = "eval_results/" # directory to save results in
 
 ## Integration parameters
 dt = 1e-3                # dt of time-integration
-# final saved trajectory in .h5 file will contain N_steps x N_times trajectories
-N_part  = 8192       # Number of particles to use per process
+# final saved trajectory in .h5 file will contain N_part trajectories with N_steps x N_times timesteps
+N_part  = 128        # Number of particles to use per process (reduced number for example data, value used for final results: 8192)
 N_steps = 2048       # number of timesteps to integrate in a batch
-N_times = 20         # number of batches with N_steps each to simulate 
+N_times = 10         # number of batches with N_steps each to simulate 
 divergence_threshold = 8 # consider a trajectory diverged after any components absolute value is larger than this, reset that traj. to zero
 initialization_method = "DNS" # method to use for initializing the simulation available options: 
                               # "DNS", "Gaussian", "restart_sim" (see following attributes), "Lyapunov" 
@@ -77,10 +77,10 @@ N_files = 1       # Number of files to load in a sequence to load longer traject
                   # (assuming trajectories are split into multiple files)
 
 data_dir  = "data/" # base file-directory
-file_name = "tracked_part1_A_starting_{:03d}.bin" # file-namespace
-nfile0    = 30     # ID of the first file to load
+file_name = "velocity_gradients_{:03d}.bin" # file-namespace
+nfile0    = 1     # ID of the first file to load (useful for skipping a transient period in a sequence of output files)
 
-N_part_per_file = 262144  # Number of particles saved in each reference data-file
+N_part_per_file    = 1000 # Number of particles saved in each reference data-file (reduced number of example data)
 N_steps_per_file   = 500  # Number of timesteps saved in each reference data-file  
 dt_data = 1e-3            # dt of reference data 
                           # (should be equal to or a clean fraction of dt above to avoid supersampling artifacts)

@@ -31,19 +31,21 @@ from util_code.main_util import init_parallel, init_variables, init_model
 ##################################################################
 
 ## Training parameters
-logf_network_file = "nf_results/states/f_state_epoch_80.pt" # state-file for the previously trained single-point pdf network (see nf_optim files)
-G_network_file = None  # state-file from previous training to use for initialization of the MULTI-TIME stat. network
+logf_network_file = "nf_results/states/f_state_epoch_80.pt" # state-file for the previously trained single-point pdf network (see main_nf_optim.py file)
+G_network_file = None  # state-file from previous training to use for initialization of the multi-time stat. network
                        # (set to None for random initializition)
 N_epochs = 20          # Number of training epochs to perform
-lr = 1e-4              # Learning rate of the ADAM-optimizer
+lr   = 1e-4            # Learning rate of the ADAM-optimizer
+beta = 1e-5            # Weighting factor for the conditional time derivative loss contribution
 out_dir = "traj_results/" # directory to save results in
-write_states_freq = 1  # write out networks every N-th iteration
+write_states_freq = 1  # write out networks every N-th epoch
 
 ## Integration parameters
-dt = 1e-3       # dt of time-integration
-N_steps = 1024  # number of timesteps to integrate
-N_part    = 32*32 # Number of particles to load per process
-N_batches = 32    # Number of batches to split the data into (should be modified to match available memory)
+dt = 1e-3         # dt of time-integration
+N_steps   = 256   # number of timesteps to integrate (has to be equal to or smaller than available data N_files * N_steps_per_file,
+                  #                                   reduced number for example data)
+N_part    = 128   # Number of particles to use per process (reduced number for example data)
+N_batches = 10    # Number of batches to split the given number of particles into (should be modified to match available memory)
 
 ## Model parameters
 N_var = 8
@@ -71,10 +73,10 @@ N_files = 1       # Number of files to load in a sequence to load longer traject
                   # (assuming trajectories are split into multiple files)
 
 data_dir  = "data/" # base file-directory
-file_name = "tracked_part1_A_starting_{:03d}.bin" # file-namespace
-nfile0    = 30     # ID of the first file to load
+file_name = "velocity_gradients_{:03d}.bin" # file-namespace
+nfile0    = 1     # ID of the first file to load (useful for skipping a transient period in a sequence of output files)
 
-N_part_per_file = 262144  # Number of particles saved in each reference data-file
+N_part_per_file    = 1000 # Number of particles saved in each reference data-file (reduced number of example data)
 N_steps_per_file   = 500  # Number of timesteps saved in each reference data-file  
 dt_data = 1e-3            # dt of reference data 
                           # (should be equal to or a clean fraction of dt above to avoid supersampling artifacts)
@@ -241,7 +243,7 @@ class Trainer():
                 loss_sp = self.compute_loss(A_ens, A_targ, epoch, derivative=False)
 
                 #loss for each minibatch
-                loss = loss_sp + 1e-5*loss_der
+                loss = loss_sp + beta*loss_der
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()

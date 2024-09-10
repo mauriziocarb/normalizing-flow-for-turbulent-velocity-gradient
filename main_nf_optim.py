@@ -34,10 +34,10 @@ logf_network_file = None  # state-file from previous training to use for initial
                     # (set to None for random initializition)
 N_epochs = 80       # Number of training epochs to compute
 lr = 3e-5           # Learning rate of the ADAM-optimizer
-N_part    = 65536 # Number of particles to use per process
-N_batches = 256   # Number of batches to split the data into (should be modified to match available memory)
+N_part    = 128     # Number of particles to use per process (reduced number for example data)
+N_batches = 10      # Number of batches to split the data into (should be modified to match available memory)
 out_dir = "nf_results/" # directory to save results in
-write_states_freq = 10  # write out networks every N-th iteration
+write_states_freq = 10  # write out networks every N-th epoch
 
 ## Model parameters
 N_var = 8
@@ -58,10 +58,10 @@ channels= { "widths":  [N_un]+[4*N_sbins*N_up]+[N_sbins*N_up], \
 # (supports loading of multiple files from the given dir. as long as they are numbered consecutively, 
 #  nfile0 sets the first file to start loading from)
 data_dir  = "data/" # base file-directory
-file_name = "tracked_part1_A_starting_{:03d}.bin"             # file-namespace
-nfile0    =  30   # ID of the first file to load
+file_name = "velocity_gradients_{:03d}.bin" # file-namespace
+nfile0    = 1     # ID of the first file to load (useful for skipping a transient period in a sequence of output files)
 
-N_part_per_file = 262144  # Number of particles saved in each reference data-file
+N_part_per_file    = 1000  # Number of particles saved in each reference data-file (reduced number of example data)
 N_steps_per_file   = 500  # Number of timesteps saved in each reference data-file
 
 
