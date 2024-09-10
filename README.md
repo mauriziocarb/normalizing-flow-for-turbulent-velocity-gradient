@@ -9,8 +9,8 @@ Implementation and evaluation of the normalizing flow model in the paper:
 3. Run "main_eval.py" with the two trained models to generate trajectories for evaluation.
 
 ## Including the training data
-- For reference, a small subset of the training data is provided in the data/ folder
-- Parallelized data-loading is handled by the function "read_bindary_DNS" in "util_code/IO.py". When using your own data, this function can be adapted for loading training data with different layouts or fileformats from the binary data used in the paper.
+- For reference, a small subset of the training data is provided in the data/ folder, containing 1000 trajectories with 500 timesteps at dt=1e-3.
+- Parallelized data-loading is handled by the function "read_bindary_DNS" in "util_code/IO.py". When using your own data this function can be adapted for loading training data with different layouts or fileformats from the binary data used in the paper.
 
 ## Notes on running the code
 - Relevant parameters for the three main programs are set at the top of each file with explanations given as comments for the meaning and possible values of each parameter.
